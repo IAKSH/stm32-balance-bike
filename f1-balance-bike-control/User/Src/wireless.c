@@ -7,11 +7,7 @@
 #include "OLED.h"
 #include "data_proc.h"
 
-
-
 static NRF24L01P_Fragment fragments[NRF24L01P_FRAGMENT_MAX_LEN];
-
-
 
 void wireless_irq(void)
 {
@@ -104,16 +100,18 @@ void wireless_receive(void* data, uint16_t len) {
 }
 */
 
-
-
 void wireless_send_task(void *argument)
 {
     while (1)
     {
-        // 等待发送队列中的数据
-        // printf("当前剩余堆空间：%u 字节\r\n", (unsigned int)xPortGetFreeHeapSize());
-        motor_speed_calc();
-        
+        CommandPacket command = {
+            .version = 0x00,
+            .type = COMMAND_MOVE
+        };
+
+        data_packaing(&command);
+
+        wireless_send(&command, sizeof(command));
         osDelay(100);
     }
 }
