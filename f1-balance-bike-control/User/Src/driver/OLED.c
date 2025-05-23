@@ -1261,7 +1261,7 @@ void OLED_DrawArc(int16_t X, int16_t Y, uint8_t Radius, int16_t StartAngle, int1
 	}
 }
 
-extern float thb001p_adc_value[4];
+extern int thb001p_adc_value[4];
 extern osSemaphoreId_t thb001pDataReadySemaphore;
 
 extern float pitch,roll,yaw;
@@ -1277,10 +1277,15 @@ void oled_task(void *argument)
 		OLED_ShowString(0,24,"right_x:",OLED_6X8);
 		OLED_ShowString(0,32,"right_y:",OLED_6X8);
 
-		OLED_ShowFloatNum(60,8,thb001p_adc_value[0],1,2,OLED_6X8);
-		OLED_ShowFloatNum(60,16,thb001p_adc_value[1],1,2,OLED_6X8);
-		OLED_ShowFloatNum(60,24,thb001p_adc_value[2],1,2,OLED_6X8);
-		OLED_ShowFloatNum(60,32,thb001p_adc_value[3],1,2,OLED_6X8);
+		OLED_ShowNum(60,8,thb001p_adc_value[0],4,OLED_6X8);
+		OLED_ShowNum(60,16,thb001p_adc_value[1],4,OLED_6X8);
+		OLED_ShowNum(60,24,thb001p_adc_value[2],4,OLED_6X8);
+		OLED_ShowNum(60,32,thb001p_adc_value[3],4,OLED_6X8);
+
+		// OLED_ShowFloatNum(60,8,thb001p_adc_value[0],1,2,OLED_6X8);
+		// OLED_ShowFloatNum(60,16,thb001p_adc_value[1],1,2,OLED_6X8);
+		// OLED_ShowFloatNum(60,24,thb001p_adc_value[2],1,2,OLED_6X8);
+		// OLED_ShowFloatNum(60,32,thb001p_adc_value[3],1,2,OLED_6X8);
 
 		if(osSemaphoreAcquire(thb001pDataReadySemaphore,100)==osOK)
 		{
