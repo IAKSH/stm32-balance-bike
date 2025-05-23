@@ -2,10 +2,13 @@
 #include "stdlib.h"
 #include "stdio.h"
 
-#define SPEED_CALC(x) ((80.214 * (x) * (x)) + 4098.93 * (x) - 7200)
+#define ADC_OFFSET(x) (((x) > 0) ? (10) : (-10))
+#define GYRO_OFFSET(x)  (((x) > 0) ? (10) : (-10))
 
 #define ADC_CENTER 2048
-#define DEAD_ZONE 200 // 死区，避免轻微抖动
+#define ADC_DEAD_ZONE 200 // 死区，避免轻微抖动
+
+#define GYRO_DEAD_ZERO 5
 
 #define MAX_SPEED 7200
 
@@ -18,11 +21,9 @@ void motor_speed_calc(void)
     int motor_speed_x = thb001p_adc_value[0] - ADC_CENTER;
     int motor_speed_y = thb001p_adc_value[1] - ADC_CENTER;
 
-    printf("adc_val:%d\n", thb001p_adc_value[0]);
-
-    if (abs(motor_speed_x) < DEAD_ZONE)
+    if (abs(motor_speed_x) < ADC_DEAD_ZONE)
         motor_speed_x = 0;
-    if (abs(motor_speed_y) < DEAD_ZONE)
+    if (abs(motor_speed_y) < ADC_DEAD_ZONE)
         motor_speed_y = 0;
 
     int speed = motor_speed_y * MAX_SPEED / (4095 / 2);
@@ -31,10 +32,14 @@ void motor_speed_calc(void)
     int motor_left_speed = speed + turn;
     int motor_right_speed = speed - turn;
 
-    if (motor_left_speed > MAX_SPEED) motor_left_speed = MAX_SPEED;
-    if (motor_left_speed < -MAX_SPEED) motor_left_speed = -MAX_SPEED;
-    if (motor_right_speed > MAX_SPEED) motor_right_speed = MAX_SPEED;
-    if (motor_right_speed < -MAX_SPEED) motor_right_speed = -MAX_SPEED;
+    if (motor_left_speed > MAX_SPEED)
+        motor_left_speed = MAX_SPEED;
+    if (motor_left_speed < -MAX_SPEED)
+        motor_left_speed = -MAX_SPEED;
+    if (motor_right_speed > MAX_SPEED)
+        motor_right_speed = MAX_SPEED;
+    if (motor_right_speed < -MAX_SPEED)
+        motor_right_speed = -MAX_SPEED;
 
     float norm_left = (float)motor_left_speed / MAX_SPEED;
     float norm_right = (float)motor_right_speed / MAX_SPEED;
@@ -42,6 +47,27 @@ void motor_speed_calc(void)
     motor_left_speed = (int)(norm_left * norm_left * norm_left * MAX_SPEED);
     motor_right_speed = (int)(norm_right * norm_right * norm_right * MAX_SPEED);
 
-
     printf("motor_speed: %d  %d\n", motor_left_speed, motor_right_speed);
+}
+
+void gimbal_angle_calc(void)
+{
+    int gimbal_angle_x = thb001p_adc_value[2] - ADC_CENTER;
+    int gimbal_angle_y = thb001p_adc_value[3] - ADC_CENTER;
+
+    if (abs(gimbal_angle_x) < ADC_DEAD_ZONE)
+        gimbal_angle_x = 0;
+    if (abs(gimbal_angle_y) < ADC_DEAD_ZONE)
+        gimbal_angle_y = 0;
+
+    float gimbal_pitch = pitch;
+    float gimbal_roll = roll;
+
+    if (abs(gimbal_pitch) < GYRO_DEAD_ZERO)
+        gimbal_pitch = 0;
+    if (abs(gimbal_roll) < GYRO_DEAD_ZERO)
+        gimbal_roll = roll;
+
+    int angle_buttom_offset = ADC_OFFSET(gimbal_angle_x)+GYRO_OFFSET(gimbal_roll);
+    int angle_top_offset = ADC_OFFSET(gimbal_angle_y)+GYRO_OFFSET(gimbal_pitch);
 }

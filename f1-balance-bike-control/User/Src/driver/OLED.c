@@ -1292,13 +1292,13 @@ void oled_task(void *argument)
 			OLED_UpdateArea(0,8,127,40);
 		}
 
-		OLED_ShowString(0,45,"pitch:",OLED_6X8);
-		OLED_ShowString(0,53,"roll:",OLED_6X8);
-		OLED_ShowString(0,61,"yaw:",OLED_6X8);
+		OLED_ShowString(0,40,"pitch:",OLED_6X8);
+		OLED_ShowString(0,48,"roll:",OLED_6X8);
+		OLED_ShowString(0,56,"yaw:",OLED_6X8);
 
-		OLED_ShowFloatNum(42,45,pitch,3,3,OLED_6X8);
-		OLED_ShowFloatNum(42,53,roll,3,3,OLED_6X8);
-		OLED_ShowFloatNum(42,61,yaw,3,3,OLED_6X8);
+		OLED_ShowFloatNum(42,40,pitch,3,3,OLED_6X8);
+		OLED_ShowFloatNum(42,48,roll,3,3,OLED_6X8);
+		OLED_ShowFloatNum(42,56,yaw,3,3,OLED_6X8);
 
 		OLED_UpdateArea(0,45,127,65);
 		
