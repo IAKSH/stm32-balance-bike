@@ -76,5 +76,5 @@ void gimbal_angle_calc(float *angle_buttom_offset,float *angle_top_offset)
 void data_packaing(CommandPacket *command)
 {
     motor_speed_calc(&command->payload.move.speed[0], &command->payload.move.speed[1]);
-    gimbal_angle_calc(&command->payload.cam_rotate.angle[0], &command->payload.cam_rotate.angle[1]);
+    // gimbal_angle_calc(&command->payload.cam_rotate.angle[0], &command->payload.cam_rotate.angle[1]);
 }

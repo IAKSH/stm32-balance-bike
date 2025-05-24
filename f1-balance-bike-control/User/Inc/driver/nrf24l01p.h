@@ -17,8 +17,8 @@
 #define NRF24L01P_CE_PIN_NUMBER           GPIO_PIN_0
 
 // 中断引脚端口和引脚号（IRQ）
-#define NRF24L01P_IRQ_PIN_PORT            GPIOB
-#define NRF24L01P_IRQ_PIN_NUMBER          GPIO_PIN_2
+#define NRF24L01P_IRQ_PIN_PORT            GPIOA
+#define NRF24L01P_IRQ_PIN_NUMBER          GPIO_PIN_4
 
 #define NRF24L01P_FRAGMENT_MAX_LEN 128
 
