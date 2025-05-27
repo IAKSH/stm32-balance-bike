@@ -4,7 +4,7 @@
 #include "wireless.h"
 
 #define ADC_OFFSET(x) (((x) > 0) ? (10) : (-10))
-#define GYRO_OFFSET(x)  (((x) > 0) ? (10) : (-10))
+#define GYRO_OFFSET(x) (((x) > 0) ? (10) : (-10))
 
 #define ADC_CENTER 2048
 #define ADC_DEAD_ZONE 200 // 死区，避免轻微抖动
@@ -16,7 +16,7 @@
 extern int thb001p_adc_value[4];
 extern float pitch, roll, yaw;
 
-void motor_speed_calc(int *motor_left_speed,int *motor_right_speed)
+void motor_speed_calc(int *motor_left_speed, int *motor_right_speed)
 {
     // 电机转速处理
     int motor_speed_x = thb001p_adc_value[0] - ADC_CENTER;
@@ -45,13 +45,13 @@ void motor_speed_calc(int *motor_left_speed,int *motor_right_speed)
     float norm_left = (float)*motor_left_speed / MAX_SPEED;
     float norm_right = (float)*motor_right_speed / MAX_SPEED;
 
-    *motor_left_speed = (int)(norm_left * norm_left * norm_left * MAX_SPEED);
-    *motor_right_speed = (int)(norm_right * norm_right * norm_right * MAX_SPEED);
+    *motor_left_speed = (int)(norm_left * norm_left * MAX_SPEED);
+    *motor_right_speed = (int)(norm_right * norm_right * MAX_SPEED);
 
     printf("motor_speed: %d  %d\n", *motor_left_speed, *motor_right_speed);
 }
 
-void gimbal_angle_calc(float *angle_buttom_offset,float *angle_top_offset)
+void gimbal_angle_calc(float *angle_buttom_offset, float *angle_top_offset)
 {
     int gimbal_angle_x = thb001p_adc_value[2] - ADC_CENTER;
     int gimbal_angle_y = thb001p_adc_value[3] - ADC_CENTER;
@@ -69,8 +69,8 @@ void gimbal_angle_calc(float *angle_buttom_offset,float *angle_top_offset)
     if (abs(gimbal_roll) < GYRO_DEAD_ZERO)
         gimbal_roll = roll;
 
-    *angle_buttom_offset = ADC_OFFSET(gimbal_angle_x)+GYRO_OFFSET(gimbal_roll);
-    *angle_top_offset = ADC_OFFSET(gimbal_angle_y)+GYRO_OFFSET(gimbal_pitch);
+    *angle_buttom_offset = ADC_OFFSET(gimbal_angle_x) + GYRO_OFFSET(gimbal_roll);
+    *angle_top_offset = ADC_OFFSET(gimbal_angle_y) + GYRO_OFFSET(gimbal_pitch);
 }
 
 void data_packaing(CommandPacket *command)

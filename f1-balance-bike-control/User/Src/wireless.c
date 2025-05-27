@@ -111,7 +111,7 @@ void wireless_send_task(void *argument)
 
         data_packaing(&command);
 
-        wireless_send(&command, sizeof(command));
+        //wireless_send(&command, sizeof(command));
         osDelay(100);
     }
 }
