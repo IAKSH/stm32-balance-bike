@@ -1,4 +1,5 @@
 #include "main.h"
+#include "tasks.h"
 #include <stdio.h>
 
 void test_led_task(void* arg) {

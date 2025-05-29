@@ -1,7 +1,8 @@
 #include "cmsis_os2.h"
 #include "motor.h"
+#include "tasks.h"
 #include <drivers/gyro/gyro.h>
-#include <utils/pid.h>
+#include <utils/pid.hpp>
 #include <math.h>
 #include <stdio.h>
 
@@ -18,17 +19,19 @@ float motorSpeedA,motorSpeedB;
 
 /* 初始化 PID 参数，此处参数需要根据系统实际情况做具体调试 */ 
 PID pid_angle  = {
-    .Kp = ANGLE_KP, .Ki = ANGLE_KI, .Kd =ANGLE_KD,      // 外环：车体倾角控制
-    .setpoint = 0.0f,
-    .lastError = 0.0f,
+    // 外环：车体倾角控制
+    .kp = ANGLE_KP, .ki = ANGLE_KI, .kd =ANGLE_KD,
+    .set_point = 0.0f,
+    .last_error = 0.0f,
     .integral = 0.0f,
     .output = 0.0f
 };
 
 PID pid_speed = {
-    .Kp = SPEED_KP, .Ki = SPEED_KI, .Kd =SPEED_KD,        // 内环：右轮速度控制
-    .setpoint = 0.0f,
-    .lastError = 0.0f,
+    // 内环：右轮速度控制
+    .kp = SPEED_KP, .ki = SPEED_KI, .kd =SPEED_KD,
+    .set_point = 0.0f,
+    .last_error = 0.0f,
     .integral = 0.0f,
     .output = 0.0f
 };
@@ -100,8 +103,8 @@ void balance_task(void* arg) {
         currentAngle = mpu6050_pitch;
 
         /* 外环 PID 控制：目标倾角设为 0°（竖直状态），计算倾角修正量 */
-        pid_angle.setpoint = 0.0f;
-        float angleCorrection = pid_compute(&pid_angle, currentAngle, dt);
+        pid_angle.set_point = 0.0f;
+        float angleCorrection = pid_angle(currentAngle, dt);
         // 外环输出限幅
         //if(angleCorrection > 400.0f) angleCorrection = 400.0f;
         //if(angleCorrection < -400.0f) angleCorrection = -400.0f;
@@ -109,8 +112,8 @@ void balance_task(void* arg) {
         /* 内环 PID 控制：以外环输出作为左右轮目标速度
            注：如果系统是对称设计，两个轮子的 PID 参数可以一样 */
         float avgSpeed = (motorSpeedA + motorSpeedB) / 2.0f;
-        pid_speed.setpoint = angleCorrection;
-        float speedCommand = pid_compute(&pid_speed, avgSpeed, dt);
+        pid_speed.set_point = angleCorrection;
+        float speedCommand = pid_speed(avgSpeed, dt);
 
         // 两轮用同样的输出
         float speedCommandA = speedCommand;

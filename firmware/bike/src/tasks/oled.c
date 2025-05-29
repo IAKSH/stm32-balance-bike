@@ -1,4 +1,5 @@
 #include "main.h"
+#include "tasks.h"
 #include <drivers/ssd1306/ssd1306.h>
 #include <drivers/gyro/gyro.h>
 #include <stdio.h>

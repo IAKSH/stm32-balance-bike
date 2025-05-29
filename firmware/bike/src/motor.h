@@ -1,4 +1,8 @@
 #pragma once
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "main.h"
 #include <stdint.h>
 
@@ -34,3 +38,7 @@ void motorInit(void);
 void motorSetDirect(MotorID id, MotorDirection direction);
 void motorSetSpeed(MotorID id,uint16_t speed);
 void motorUpdateSpeed(float* motorSpeedA,float* motorBSpeedB);
+
+#ifdef __cplusplus
+}
+#endif

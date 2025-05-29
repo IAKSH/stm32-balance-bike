@@ -1,4 +1,8 @@
 #pragma once
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdint.h>
 #include <stdbool.h>
 #include <drivers/nrf24l01p/nrf24l01p.h>
@@ -61,4 +65,8 @@ void wireless_send(void* data,uint16_t len);
 
 #ifndef WIRELESS_TX_ONLY
 void wireless_receive(void* data,uint16_t len);
+#endif
+
+#ifdef __cplusplus
+}
 #endif

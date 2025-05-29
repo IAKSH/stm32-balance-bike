@@ -20,7 +20,7 @@ void wireless_irq(void) {
 #ifndef WIRELESS_TX_ONLY
     if(state->nrf24->__tx_mode_enabled) {
 #endif
-        nrf24l01p_check_ack(state);
+        nrf24l01p_check_ack();
 #ifndef WIRELESS_TX_ONLY
     } else {
         NRF24L01P_Fragment frag;
@@ -39,7 +39,7 @@ void wireless_send(void* data,uint16_t len) {
     uint16_t frag_cnt = len / payload_size + ((len % payload_size) ? 1 : 0);
 
     // 分包
-    uint8_t* p = data;
+    uint8_t* p = (uint8_t*)data;
     for(uint16_t i = 0;i < frag_cnt;i++) {
         state->nrf24->__fragments[i].end = (i == frag_cnt - 1);
         uint16_t copy_len = payload_size;
@@ -77,7 +77,7 @@ void wireless_receive(void* data, uint16_t len) {
 
         if (state->nrf24->__fragments[frag_cnt].end) {
             uint16_t total_frags = frag_cnt + 1;
-            uint8_t* p = data;
+            uint8_t* p = (uint8_t*)data;
             const uint16_t frag_payload_size = sizeof(state->nrf24->__fragments[0].payload);
             for (uint16_t i = 0; i < total_frags; i++) {
                 uint16_t copy_len = frag_payload_size;

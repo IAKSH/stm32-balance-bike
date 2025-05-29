@@ -1,5 +1,6 @@
 #include "main.h"
-#include <utils/pid.h>
+#include "tasks.h"
+#include <utils/pid.hpp>
 #include <drivers/nrf24l01p/nrf24l01p.h>
 #include <protocols/wireless.h>
 #include <stdio.h>
@@ -23,13 +24,13 @@ static void command_move_handler(CommandPacket command) {
 static void command_pid_handler(CommandPacket command) {
     if(command.payload.pid.write) {
         extern PID pid_speed,pid_angle;
-        pid_speed.Kp = command.payload.pid.speed_pid.kp;
-        pid_speed.Ki = command.payload.pid.speed_pid.ki;
-        pid_speed.Kd = command.payload.pid.speed_pid.kd;
+        pid_speed.kp = command.payload.pid.speed_pid.kp;
+        pid_speed.ki = command.payload.pid.speed_pid.ki;
+        pid_speed.kd = command.payload.pid.speed_pid.kd;
 
-        pid_angle.Kp = command.payload.pid.angle_pid.kp;
-        pid_angle.Ki = command.payload.pid.angle_pid.ki;
-        pid_angle.Kd = command.payload.pid.angle_pid.kd;
+        pid_angle.kp = command.payload.pid.angle_pid.kp;
+        pid_angle.ki = command.payload.pid.angle_pid.ki;
+        pid_angle.kd = command.payload.pid.angle_pid.kd;
     }
     else {
         nrf24l01p_set_mode_tx(2500, NRF24L01P_AIR_DATA_RATE_1Mbps);
