@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "tasks.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,6 +45,23 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
+osThreadId_t balanceTaskHandle;
+const osThreadAttr_t balanceTask_attributes={
+  .name="balanceTask",
+  .stack_size=128*8,
+  .priority=(osPriority_t) osPriorityNormal1,
+};
+
+osThreadId_t oledTaskHandle;
+const osThreadAttr_t oledTask_attributes={
+  .name="oledTask",
+  .stack_size=128*4,
+  .priority=(osPriority_t) osPriorityNormal,
+};
+osMutexId_t i2cBusyMutex;
+osSemaphoreId_t mpu6050DataReadySemaphore;
+osEventFlagsId_t event;
+
 
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
@@ -76,10 +93,12 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
+  i2cBusyMutex = osMutexNew(NULL);
   /* USER CODE END RTOS_MUTEX */
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
   /* add semaphores, ... */
+
   /* USER CODE END RTOS_SEMAPHORES */
 
   /* USER CODE BEGIN RTOS_TIMERS */
@@ -96,10 +115,14 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+  oledTaskHandle=osThreadNew(oled_task,NULL,&oledTask_attributes);
+  balanceTaskHandle=osThreadNew(balance_task,NULL,&balanceTask_attributes);
+
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */
+   event = osEventFlagsNew(NULL);
   /* USER CODE END RTOS_EVENTS */
 
 }
