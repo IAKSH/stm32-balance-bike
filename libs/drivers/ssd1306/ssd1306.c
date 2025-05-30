@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include "ssd1306.h"
 
-static SSD1306State* state = NULL;
+static SSD1306State* state;
 
 void ssd1306_create_state(SSD1306State* s) {
     s->cursor.x = 0;
@@ -96,8 +96,9 @@ void ssd1306_turn_display(bool on) {
 
 void ssd1306_init() {
     ssd1306_reset();
+    printf("delay 1\n");
     state->__impl.delay_ms(100);
-
+    printf("delay 2\n");
     ssd1306_turn_display(false);
 
     state->__impl.write_cmd(0x20); // Set Memory Addressing Mode
@@ -159,8 +160,6 @@ void ssd1306_init() {
 }
 
 void ssd1306_flush(void) {
-    if (!state)
-        return;
     for (uint8_t page = 0; page < (SSD1306_SCREEN_HEIGHT / 8); page++) {
         state->__impl.write_cmd(0xB0 | page); // 设置页地址
         state->__impl.write_cmd(0x00);        // 设置低列地址

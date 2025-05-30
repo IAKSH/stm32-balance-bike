@@ -5,6 +5,7 @@ extern "C" {
 
 #include <stdint.h>
 #include <stdbool.h>
+#include "cmsis_os.h"
 
 #ifndef SSD1306_SCREEN_WIDTH
 #define SSD1306_SCREEN_WIDTH 128
@@ -75,6 +76,7 @@ typedef struct {
         void (*write_cmd)(uint8_t byte);
         void (*write_data)(uint8_t* buf,uint16_t len);
     } __impl;
+
 } SSD1306State;
 
 void ssd1306_use_state(SSD1306State* s);

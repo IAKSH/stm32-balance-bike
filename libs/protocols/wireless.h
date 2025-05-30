@@ -5,7 +5,7 @@ extern "C" {
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <drivers/nrf24l01p/nrf24l01p.h>
+#include "nrf24l01p.h"
 #ifndef WIRELESS_TX_ONLY
 #include <cmsis_os2.h>
 #endif

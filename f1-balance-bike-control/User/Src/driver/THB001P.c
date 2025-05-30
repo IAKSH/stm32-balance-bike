@@ -1,6 +1,5 @@
 #include "THB001P.h"
 #include "adc.h"
-#include "OLED.h"
 #include "cmsis_os.h"
 
 
@@ -18,20 +17,9 @@ void TH8001P_read_data(void)
         thb001p_adc_value[i]=adc_value;
     }
     HAL_ADC_Stop(&hadc1);
-    osSemaphoreRelease(thb001pDataReadySemaphore);
+    //osSemaphoreRelease(thb001pDataReadySemaphore);
 }
 
-void thb001p_task(void *argument)
-{
-    while (1)
-    {
-
-        TH8001P_read_data(); 
-
-        osDelay(100);
-    }
-    
-}
 
 
 

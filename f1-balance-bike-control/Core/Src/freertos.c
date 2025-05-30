@@ -25,12 +25,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "system.h"
-#include "OLED.h"
-#include "mpu6050.h"
-#include "THB001P.h"
 #include "wireless.h"
 #include "stdio.h"
+#include "tasks.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -53,28 +50,35 @@
 osThreadId_t oledTaskHandle;
 const osThreadAttr_t oledTask_attributes = {
     .name = "oledTask",
-    .stack_size = 128 * 4,
+    .stack_size = 128 * 8,
     .priority = (osPriority_t)osPriorityNormal,
 };
-osThreadId_t mpu6050TaskHandle;
-const osThreadAttr_t mpu6050Task_attributes = {
-    .name = "mpu6050Task",
-    .stack_size = 128 * 4,
+// osThreadId_t mpu6050TaskHandle;
+// const osThreadAttr_t mpu6050Task_attributes = {
+//     .name = "mpu6050Task",
+//     .stack_size = 128 * 4,
+//     .priority = (osPriority_t)osPriorityNormal1,
+// };
+// osThreadId_t thb001pTaskHandle;
+// const osThreadAttr_t thb001pTask_attributes = {
+//     .name = "thb001pTask",
+//     .stack_size = 128 * 4,
+//     .priority = (osPriority_t)osPriorityNormal,
+// };
+
+osThreadId_t controlTaskHandle;
+const osThreadAttr_t controlTask_attributes = {
+    .name = "controlTask",
+    .stack_size = 128 * 8,
     .priority = (osPriority_t)osPriorityNormal1,
 };
-osThreadId_t thb001pTaskHandle;
-const osThreadAttr_t thb001pTask_attributes = {
-    .name = "thb001pTask",
-    .stack_size = 128 * 4,
-    .priority = (osPriority_t)osPriorityNormal,
-};
 
-osThreadId_t wirelessTxTaskHandle;
-const osThreadAttr_t wirelessTxTask_attributes = {
-    .name = "wirelessTxTask",
-    .stack_size = 128 * 4,
-    .priority = (osPriority_t)osPriorityNormal,
-};
+// osThreadId_t wirelessTxTaskHandle;
+// const osThreadAttr_t wirelessTxTask_attributes = {
+//     .name = "wirelessTxTask",
+//     .stack_size = 128 * 4,
+//     .priority = (osPriority_t)osPriorityNormal,
+// };
 
 osSemaphoreId_t thb001pDataReadySemaphore;
 const osSemaphoreAttr_t thb001pDataReadySemaphore_attributes = {
@@ -83,6 +87,10 @@ const osSemaphoreAttr_t thb001pDataReadySemaphore_attributes = {
 osSemaphoreId_t mpu6050DataReadySemaphore;
 const osSemaphoreAttr_t mpu6050DataReadySemaphore_attributes = {
     .name = "mpu6050DataReadySemaphore"};
+
+osMutexId_t i2c_bus_mutex;
+
+osEventFlagsId_t mpu6050_init_event;
 
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
@@ -109,18 +117,18 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-  system_init();
+  
   /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
-
+  i2c_bus_mutex=osMutexNew(NULL);
   /* USER CODE END RTOS_MUTEX */
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
   /* add semaphores, ... */
-  thb001pDataReadySemaphore = osSemaphoreNew(1, 0, &thb001pDataReadySemaphore_attributes);
-  mpu6050DataReadySemaphore = osSemaphoreNew(1, 0, &mpu6050DataReadySemaphore_attributes);
+  // thb001pDataReadySemaphore = osSemaphoreNew(1, 0, &thb001pDataReadySemaphore_attributes);
+  // mpu6050DataReadySemaphore = osSemaphoreNew(1, 0, &mpu6050DataReadySemaphore_attributes);
   /* USER CODE END RTOS_SEMAPHORES */
 
   /* USER CODE BEGIN RTOS_TIMERS */
@@ -138,22 +146,25 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   oledTaskHandle = osThreadNew(oled_task, NULL, &oledTask_attributes);
-  mpu6050TaskHandle = osThreadNew(mpu6050_task,NULL,&mpu6050Task_attributes);
-  thb001pTaskHandle = osThreadNew(thb001p_task, NULL, &thb001pTask_attributes);
-  wirelessTxTaskHandle = osThreadNew(wireless_send_task, NULL, &wirelessTxTask_attributes);
-  if (wirelessTxTaskHandle == NULL)
-  {
-    printf("failed\n");
-  }
-  else
-  {
-    printf("success\n");
-  }
+  // mpu6050TaskHandle = osThreadNew(mpu6050_task,NULL,&mpu6050Task_attributes);
+  // thb001pTaskHandle = osThreadNew(thb001p_task, NULL, &thb001pTask_attributes);
+
+  controlTaskHandle=osThreadNew(control_task,NULL,&controlTask_attributes);
+  // wirelessTxTaskHandle = osThreadNew(wireless_send_task, NULL, &wirelessTxTask_attributes);
+  // if (wirelessTxTaskHandle == NULL)
+  // {
+  //   printf("failed\n");
+  // }
+  // else
+  // {
+  //   printf("success\n");
+  // }
 
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */
+  mpu6050_init_event = osEventFlagsNew(NULL);
   /* USER CODE END RTOS_EVENTS */
 
 }

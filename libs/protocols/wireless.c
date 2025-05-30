@@ -1,4 +1,4 @@
-#include <drivers/nrf24l01p/nrf24l01p.h>
+#include "nrf24l01p.h"
 #include <stdio.h>
 #include <string.h>
 #include "wireless.h"

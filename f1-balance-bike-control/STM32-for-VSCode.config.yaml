@@ -20,7 +20,7 @@ floatAbi:
 ldscript: STM32F103XX_FLASH.ld # linker script
 
 # Compiler definitions. The -D prefix for the compiler will be automatically added.
-cDefinitions: ["ENABLE_STDOUT_REDIRECT"]
+cDefinitions: ["ENABLE_STDOUT_REDIRECT","SSD1306_SCREEN_HEIGHT=64"]
 cxxDefinitions: []
 asDefinitions: []
 
@@ -81,6 +81,8 @@ includeDirectories:
   - Core/Src/**
   - Core/Lib/**
   - User/Inc/**
+  - libs/**
+  - User/Utils/**
 
 
 
@@ -95,6 +97,7 @@ sourceFiles:
   - Core/Lib/**
   - User/Src/**
   - USer/Utils/**
+  - libs/**
 
 
 # When no makefile is present it will show a warning pop-up.

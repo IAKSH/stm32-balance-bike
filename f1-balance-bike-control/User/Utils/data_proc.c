@@ -14,7 +14,7 @@
 #define MAX_SPEED 7200
 
 extern int thb001p_adc_value[4];
-extern float pitch, roll, yaw;
+extern float mpu6050_pitch,mpu_6050_roll,mpu_6050_yaw;
 
 void motor_speed_calc(int *motor_left_speed, int *motor_right_speed)
 {
@@ -61,13 +61,13 @@ void gimbal_angle_calc(float *angle_buttom_offset, float *angle_top_offset)
     if (abs(gimbal_angle_y) < ADC_DEAD_ZONE)
         gimbal_angle_y = 0;
 
-    float gimbal_pitch = pitch;
-    float gimbal_roll = roll;
+    float gimbal_pitch = mpu6050_pitch;
+    float gimbal_roll = mpu_6050_roll;
 
     if (abs(gimbal_pitch) < GYRO_DEAD_ZERO)
         gimbal_pitch = 0;
     if (abs(gimbal_roll) < GYRO_DEAD_ZERO)
-        gimbal_roll = roll;
+        gimbal_roll = mpu_6050_roll;
 
     *angle_buttom_offset = ADC_OFFSET(gimbal_angle_x) + GYRO_OFFSET(gimbal_roll);
     *angle_top_offset = ADC_OFFSET(gimbal_angle_y) + GYRO_OFFSET(gimbal_pitch);
@@ -75,6 +75,17 @@ void gimbal_angle_calc(float *angle_buttom_offset, float *angle_top_offset)
 
 void data_packaing(CommandPacket *command)
 {
-    motor_speed_calc(&command->payload.move.speed[0], &command->payload.move.speed[1]);
-    // gimbal_angle_calc(&command->payload.cam_rotate.angle[0], &command->payload.cam_rotate.angle[1]);
+    switch (command->type)
+    {
+    case COMMAND_MOVE:
+        motor_speed_calc(&command->payload.move.speed[0], &command->payload.move.speed[1]);
+        break;
+    
+    case COMMAND_CAM_ROTATE:
+        gimbal_angle_calc(&command->payload.cam_rotate.angle[0], &command->payload.cam_rotate.angle[1]);
+        break;
+
+    default:
+        break;
+    }
 }
