@@ -193,8 +193,7 @@ bool nrf24l01p_send_fragment(uint8_t *data) {
     nrf24l01p_write_tx_fifo(data);
     // 10ms超时
     uint32_t timeout = state->__impl.get_tick() + 10;
-    while (state->__tx_result == 0 && state->__impl.get_tick() < timeout)
-        ;
+    while (state->__tx_result == 0 && state->__impl.get_tick() < timeout);
     return state->__tx_result;
 }
 

@@ -25,8 +25,6 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "wireless.h"
-#include "stdio.h"
 #include "tasks.h"
 /* USER CODE END Includes */
 
@@ -53,18 +51,6 @@ const osThreadAttr_t oledTask_attributes = {
     .stack_size = 128 * 8,
     .priority = (osPriority_t)osPriorityNormal,
 };
-// osThreadId_t mpu6050TaskHandle;
-// const osThreadAttr_t mpu6050Task_attributes = {
-//     .name = "mpu6050Task",
-//     .stack_size = 128 * 4,
-//     .priority = (osPriority_t)osPriorityNormal1,
-// };
-// osThreadId_t thb001pTaskHandle;
-// const osThreadAttr_t thb001pTask_attributes = {
-//     .name = "thb001pTask",
-//     .stack_size = 128 * 4,
-//     .priority = (osPriority_t)osPriorityNormal,
-// };
 
 osThreadId_t controlTaskHandle;
 const osThreadAttr_t controlTask_attributes = {
@@ -73,32 +59,16 @@ const osThreadAttr_t controlTask_attributes = {
     .priority = (osPriority_t)osPriorityNormal1,
 };
 
-// osThreadId_t wirelessTxTaskHandle;
-// const osThreadAttr_t wirelessTxTask_attributes = {
-//     .name = "wirelessTxTask",
-//     .stack_size = 128 * 4,
-//     .priority = (osPriority_t)osPriorityNormal,
-// };
-
-osSemaphoreId_t thb001pDataReadySemaphore;
-const osSemaphoreAttr_t thb001pDataReadySemaphore_attributes = {
-    .name = "thb001pDataReadySemaphore"};
-
-osSemaphoreId_t mpu6050DataReadySemaphore;
-const osSemaphoreAttr_t mpu6050DataReadySemaphore_attributes = {
-    .name = "mpu6050DataReadySemaphore"};
-
 osMutexId_t i2c_bus_mutex;
 
 osEventFlagsId_t mpu6050_init_event;
-
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
 const osThreadAttr_t defaultTask_attributes = {
-  .name = "defaultTask",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
+    .name = "defaultTask",
+    .stack_size = 128 * 4,
+    .priority = (osPriority_t)osPriorityNormal,
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -111,24 +81,22 @@ void StartDefaultTask(void *argument);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /**
-  * @brief  FreeRTOS initialization
-  * @param  None
-  * @retval None
-  */
-void MX_FREERTOS_Init(void) {
+ * @brief  FreeRTOS initialization
+ * @param  None
+ * @retval None
+ */
+void MX_FREERTOS_Init(void)
+{
   /* USER CODE BEGIN Init */
-  
+
   /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */
   /* add mutexes, ... */
-  i2c_bus_mutex=osMutexNew(NULL);
   /* USER CODE END RTOS_MUTEX */
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
   /* add semaphores, ... */
-  // thb001pDataReadySemaphore = osSemaphoreNew(1, 0, &thb001pDataReadySemaphore_attributes);
-  // mpu6050DataReadySemaphore = osSemaphoreNew(1, 0, &mpu6050DataReadySemaphore_attributes);
   /* USER CODE END RTOS_SEMAPHORES */
 
   /* USER CODE BEGIN RTOS_TIMERS */
@@ -146,27 +114,13 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   oledTaskHandle = osThreadNew(oled_task, NULL, &oledTask_attributes);
-  // mpu6050TaskHandle = osThreadNew(mpu6050_task,NULL,&mpu6050Task_attributes);
-  // thb001pTaskHandle = osThreadNew(thb001p_task, NULL, &thb001pTask_attributes);
-
-  controlTaskHandle=osThreadNew(control_task,NULL,&controlTask_attributes);
-  // wirelessTxTaskHandle = osThreadNew(wireless_send_task, NULL, &wirelessTxTask_attributes);
-  // if (wirelessTxTaskHandle == NULL)
-  // {
-  //   printf("failed\n");
-  // }
-  // else
-  // {
-  //   printf("success\n");
-  // }
-
+  controlTaskHandle = osThreadNew(control_task, NULL, &controlTask_attributes);
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
   /* add events, ... */
   mpu6050_init_event = osEventFlagsNew(NULL);
   /* USER CODE END RTOS_EVENTS */
-
 }
 
 /* USER CODE BEGIN Header_StartDefaultTask */
@@ -182,8 +136,6 @@ void StartDefaultTask(void *argument)
   /* Infinite loop */
   for (;;)
   {
-    osThreadExit();
-    // printf("当前剩余堆空间：%u 字节\r\n", (unsigned int)xPortGetFreeHeapSize());
     osDelay(1);
   }
   /* USER CODE END StartDefaultTask */
@@ -193,4 +145,3 @@ void StartDefaultTask(void *argument)
 /* USER CODE BEGIN Application */
 
 /* USER CODE END Application */
-

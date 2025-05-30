@@ -1,9 +1,8 @@
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
-  * @file           : main.h
-  * @brief          : Header for main.c file.
-  *                   This file contains the common defines of the application.
+  * @file    stm32f1xx_it.h
+  * @brief   This file contains the headers of the interrupt handlers.
   ******************************************************************************
   * @attention
   *
@@ -19,21 +18,16 @@
 /* USER CODE END Header */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __MAIN_H
-#define __MAIN_H
+#ifndef __STM32F1xx_IT_H
+#define __STM32F1xx_IT_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* Includes ------------------------------------------------------------------*/
-#include "stm32f1xx_hal.h"
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "cmsis_os2.h"
-#include "spi.h"
-#include "i2c.h"
+
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -43,11 +37,7 @@ extern "C" {
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
-extern osMutexId_t i2c_bus_mutex;
-extern osEventFlagsId_t mpu6050_init_event;
-extern osSemaphoreId_t mpu6050DataReadySemaphore;
-extern I2C_HandleTypeDef hi2c1;
-extern SPI_HandleTypeDef hspi1;
+
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
@@ -56,30 +46,21 @@ extern SPI_HandleTypeDef hspi1;
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
-void Error_Handler(void);
-
+void NMI_Handler(void);
+void HardFault_Handler(void);
+void MemManage_Handler(void);
+void BusFault_Handler(void);
+void UsageFault_Handler(void);
+void DebugMon_Handler(void);
+void EXTI4_IRQHandler(void);
+void TIM1_UP_IRQHandler(void);
+void USART1_IRQHandler(void);
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */
-
-/* Private defines -----------------------------------------------------------*/
-#define IRQ_Pin GPIO_PIN_4
-#define IRQ_GPIO_Port GPIOA
-#define IRQ_EXTI_IRQn EXTI4_IRQn
-#define CE_Pin GPIO_PIN_0
-#define CE_GPIO_Port GPIOB
-#define CSN_Pin GPIO_PIN_1
-#define CSN_GPIO_Port GPIOB
-#define MPU6050_EXTI_Pin GPIO_PIN_5
-#define MPU6050_EXTI_GPIO_Port GPIOB
-#define MPU6050_EXTI_EXTI_IRQn EXTI9_5_IRQn
-
-/* USER CODE BEGIN Private defines */
-#define EVENT_FLAG_GYRO_INITIALIZED 0x01
-/* USER CODE END Private defines */
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __MAIN_H */
+#endif /* __STM32F1xx_IT_H */

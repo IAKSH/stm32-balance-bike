@@ -16,7 +16,7 @@
 extern int thb001p_adc_value[4];
 extern float mpu6050_pitch,mpu_6050_roll,mpu_6050_yaw;
 
-void motor_speed_calc(int16_t *motor_left_speed, int16_t *motor_right_speed)
+void motor_speed_calc(int *motor_left_speed, int *motor_right_speed)
 {
     int speed_left,speed_right;
 
@@ -52,8 +52,8 @@ void motor_speed_calc(int16_t *motor_left_speed, int16_t *motor_right_speed)
 
     printf("motor_speed: %d  %d\n", speed_left, speed_right);
 
-    *motor_left_speed = (int16_t)speed_left;
-    *motor_right_speed = (int16_t)speed_right;
+    *motor_left_speed = speed_left;
+    *motor_right_speed = speed_right;
 }
 
 void gimbal_angle_calc(float *angle_buttom_offset, float *angle_top_offset)
@@ -83,11 +83,11 @@ void data_packaing(CommandPacket *command)
     switch (command->type)
     {
     case COMMAND_MOVE:
-        motor_speed_calc(&command->payload.move.speed[0], &command->payload.move.speed[1]);
+        motor_speed_calc(&command->move.speed[0], &command->move.speed[1]);
         break;
     
     case COMMAND_CAM_ROTATE:
-        gimbal_angle_calc(&command->payload.cam_rotate.angle[0], &command->payload.cam_rotate.angle[1]);
+        // gimbal_angle_calc(&command->cam_rotate.angle[0], &command->.cam_rotate.angle[1]);
         break;
 
     default:

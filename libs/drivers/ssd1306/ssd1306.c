@@ -96,9 +96,7 @@ void ssd1306_turn_display(bool on) {
 
 void ssd1306_init() {
     ssd1306_reset();
-    printf("delay 1\n");
     state->__impl.delay_ms(100);
-    printf("delay 2\n");
     ssd1306_turn_display(false);
 
     state->__impl.write_cmd(0x20); // Set Memory Addressing Mode

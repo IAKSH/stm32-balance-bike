@@ -5,7 +5,7 @@ extern "C" {
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "cmsis_os.h"
+#include "cmsis_os2.h"
 
 #ifndef SSD1306_SCREEN_WIDTH
 #define SSD1306_SCREEN_WIDTH 128

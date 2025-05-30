@@ -31,9 +31,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "cmsis_os2.h"
-#include "spi.h"
-#include "i2c.h"
+#include "cmsis_os.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -45,9 +43,11 @@ extern "C" {
 /* USER CODE BEGIN EC */
 extern osMutexId_t i2c_bus_mutex;
 extern osEventFlagsId_t mpu6050_init_event;
-extern osSemaphoreId_t mpu6050DataReadySemaphore;
 extern I2C_HandleTypeDef hi2c1;
 extern SPI_HandleTypeDef hspi1;
+
+extern osMutexId_t i2c_bus_mutex;
+extern osEventFlagsId_t mpu6050_init_event;
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
@@ -72,7 +72,6 @@ void Error_Handler(void);
 #define CSN_GPIO_Port GPIOB
 #define MPU6050_EXTI_Pin GPIO_PIN_5
 #define MPU6050_EXTI_GPIO_Port GPIOB
-#define MPU6050_EXTI_EXTI_IRQn EXTI9_5_IRQn
 
 /* USER CODE BEGIN Private defines */
 #define EVENT_FLAG_GYRO_INITIALIZED 0x01

@@ -6,11 +6,11 @@
 # - entry_2
 
 # The project name
-target: f1-balance-bike-control
+target: f1-control
 # Can be C or C++
 language: C
 
-optimization: O2
+optimization: Og
 
 # MCU settings
 targetMCU: stm32f1x
@@ -20,7 +20,7 @@ floatAbi:
 ldscript: STM32F103XX_FLASH.ld # linker script
 
 # Compiler definitions. The -D prefix for the compiler will be automatically added.
-cDefinitions: ["ENABLE_STDOUT_REDIRECT","SSD1306_SCREEN_HEIGHT=64"]
+cDefinitions: [ENABLE_STDOUT_REDIRECT]
 cxxDefinitions: []
 asDefinitions: []
 
@@ -80,10 +80,8 @@ includeDirectories:
   - Src/**
   - Core/Src/**
   - Core/Lib/**
-  - User/Inc/**
   - libs/**
-  - User/Utils/**
-
+  - User/**
 
 
 # Files that should be included in the compilation.
@@ -95,9 +93,8 @@ sourceFiles:
   - Src/**
   - Core/Src/**
   - Core/Lib/**
-  - User/Src/**
-  - USer/Utils/**
   - libs/**
+  - User/**
 
 
 # When no makefile is present it will show a warning pop-up.
