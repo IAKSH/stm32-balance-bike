@@ -28,7 +28,7 @@ typedef struct {
     CommandType type;
     union {
         struct {
-            uint16_t speed[2];
+            int16_t speed[2];
         } move;
         struct {
             float angle[2];
