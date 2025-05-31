@@ -16,39 +16,28 @@
 extern int thb001p_adc_value[4];
 extern float pitch, roll, yaw;
 
-void motor_speed_calc(int *motor_left_speed,int *motor_right_speed)
+void motor_speed_calc(int16_t *cmd_speed,int16_t *cmd_turn)
 {
     // 电机转速处理
-    int motor_speed_x = thb001p_adc_value[0] - ADC_CENTER;
-    int motor_speed_y = thb001p_adc_value[1] - ADC_CENTER;
+    int16_t rocker_x = thb001p_adc_value[0] - ADC_CENTER;
+    int16_t rocker_y = thb001p_adc_value[1] - ADC_CENTER;
 
-    if (abs(motor_speed_x) < ADC_DEAD_ZONE)
-        motor_speed_x = 0;
-    if (abs(motor_speed_y) < ADC_DEAD_ZONE)
-        motor_speed_y = 0;
+    if (abs(rocker_x) < ADC_DEAD_ZONE)
+        rocker_x = 0;
+    if (abs(rocker_y) < ADC_DEAD_ZONE)
+        rocker_y = 0;
 
-    int speed = motor_speed_y * MAX_SPEED / (4095 / 2);
-    int turn = motor_speed_x * MAX_SPEED / (4095 / 2);
-    printf("speed : %d\n", speed);
-    *motor_left_speed = speed + turn;
-    *motor_right_speed = speed - turn;
+    int16_t speed = rocker_y * MAX_SPEED / (4095 / 2);
+    int16_t turn = rocker_x * MAX_SPEED / (4095 / 2);
 
-    if (*motor_left_speed > MAX_SPEED)
-        *motor_left_speed = MAX_SPEED;
-    if (*motor_left_speed < -MAX_SPEED)
-        *motor_left_speed = -MAX_SPEED;
-    if (*motor_right_speed > MAX_SPEED)
-        *motor_right_speed = MAX_SPEED;
-    if (*motor_right_speed < -MAX_SPEED)
-        *motor_right_speed = -MAX_SPEED;
+    float norm_speed = (float)speed / MAX_SPEED;
+    float norm_turn = (float)turn / MAX_SPEED;
 
-    float norm_left = (float)*motor_left_speed / MAX_SPEED;
-    float norm_right = (float)*motor_right_speed / MAX_SPEED;
+    *cmd_speed = (int16_t)(norm_speed * norm_speed * norm_speed * MAX_SPEED)/4;
+    *cmd_turn = (int16_t)(norm_turn * norm_turn * norm_turn * MAX_SPEED);
 
-    *motor_left_speed = (int)(norm_left * norm_left * norm_left * MAX_SPEED);
-    *motor_right_speed = (int)(norm_right * norm_right * norm_right * MAX_SPEED);
 
-    printf("motor_speed: %d  %d\n", *motor_left_speed, *motor_right_speed);
+    printf("motor_speed: %d  %d\n", *cmd_speed, *cmd_turn);
 }
 
 void gimbal_angle_calc(float *angle_buttom_offset,float *angle_top_offset)
@@ -75,6 +64,14 @@ void gimbal_angle_calc(float *angle_buttom_offset,float *angle_top_offset)
 
 void data_packaing(CommandPacket *command)
 {
-    motor_speed_calc(&command->payload.move.speed[0], &command->payload.move.speed[1]);
+    switch (command->type)
+    {
+    case COMMAND_MOVE:
+        motor_speed_calc(&command->payload.move.speed[0],&command->payload.move.speed[1]);
+        break;
+    
+    default:
+        break;
+    }
     // gimbal_angle_calc(&command->payload.cam_rotate.angle[0], &command->payload.cam_rotate.angle[1]);
 }

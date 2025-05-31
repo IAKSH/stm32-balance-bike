@@ -35,6 +35,8 @@ static void command_pid_handler(CommandPacket command) {
     }
 }
 
+CommandPacket command;
+
 void control_task(void* arg) {
     nrf24l01p_set_mode_rx(2500, NRF24L01P_AIR_DATA_RATE_1Mbps);
 
@@ -45,7 +47,7 @@ void control_task(void* arg) {
 
     nrf24l01p_set_rx_addr(0,rx_address,5);
 
-    CommandPacket command;
+    
 
     while(1) {
         wireless_receive(&command,sizeof(CommandPacket));

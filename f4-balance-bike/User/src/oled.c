@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <math.h>
 
-extern float mpu6050_pitch,mpu_6050_roll,mpu_6050_yaw;
+extern float mpu6050_pitch,mpu6050_roll,mpu6050_yaw;
 extern double pitchPIDOutput;
 
 void oled_task(void* arg) {
@@ -26,7 +26,7 @@ void oled_task(void* arg) {
     while(1) {
         snprintf(buf[0],sizeof(buf),"p= %d.%d%d r= %d.%d%d      ",
         (int)mpu6050_pitch,(int)fabs((int)(mpu6050_pitch * 10)) % 10,(int)fabs((int)(mpu6050_pitch * 100)) % 10,
-        (int)mpu_6050_roll,(int)fabs((int)(mpu_6050_roll) * 10) % 10,(int)fabs((int)(mpu_6050_roll * 100)) % 10);
+        (int)mpu6050_roll,(int)fabs((int)(mpu6050_roll) * 10) % 10,(int)fabs((int)(mpu6050_roll * 100)) % 10);
 
         ssd1306_SetCursor(0,0);
         ssd1306_WriteString(buf[0],Font_7x10,White);
