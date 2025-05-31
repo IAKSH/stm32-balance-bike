@@ -5,7 +5,6 @@ struct PID {
     float set_point;
     float last_error;
     float integral;
-    float output;
 
     float operator()(float measurement,float dt);
 };
