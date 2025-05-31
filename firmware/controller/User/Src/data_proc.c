@@ -1,6 +1,7 @@
 #include "data_proc.h"
 #include "stdlib.h"
 #include "stdio.h"
+#include "th8001p.h"
 
 #define ADC_OFFSET(x) (((x) > 0) ? (10) : (-10))
 #define GYRO_OFFSET(x)  (((x) > 0) ? (10) : (-10))
@@ -12,14 +13,14 @@
 
 #define MAX_SPEED 7200
 
-extern int thb001p_adc_value[4];
+extern th8001p_Data joystick_data;
 extern float pitch, roll, yaw;
 
 static void motor_speed_calc(int16_t *cmd_speed,int16_t *cmd_turn)
 {
     // 电机转速处理
-    int16_t rocker_x = thb001p_adc_value[0] - ADC_CENTER;
-    int16_t rocker_y = thb001p_adc_value[1] - ADC_CENTER;
+    int16_t rocker_x = joystick_data.adc_val[0] - ADC_CENTER;
+    int16_t rocker_y = joystick_data.adc_val[1] - ADC_CENTER;
 
     if (abs(rocker_x) < ADC_DEAD_ZONE)
         rocker_x = 0;
@@ -41,8 +42,8 @@ static void motor_speed_calc(int16_t *cmd_speed,int16_t *cmd_turn)
 
 static void gimbal_angle_calc(float *angle_buttom_offset,float *angle_top_offset)
 {
-    int gimbal_angle_x = thb001p_adc_value[2] - ADC_CENTER;
-    int gimbal_angle_y = thb001p_adc_value[3] - ADC_CENTER;
+    int gimbal_angle_x = joystick_data.adc_val[2] - ADC_CENTER;
+    int gimbal_angle_y = joystick_data.adc_val[3] - ADC_CENTER;
 
     if (abs(gimbal_angle_x) < ADC_DEAD_ZONE)
         gimbal_angle_x = 0;

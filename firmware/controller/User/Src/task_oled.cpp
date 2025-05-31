@@ -1,4 +1,5 @@
 #include "tasks.h"
+#include "th8001p.h"
 #include "i2c.h"
 #include <cstdio>
 #include <string>
@@ -14,7 +15,7 @@ static void write_data(uint8_t *buf, uint16_t len) {
 	HAL_I2C_Mem_Write(&hi2c1, 0x78, 0x40, I2C_MEMADD_SIZE_8BIT, buf, len, HAL_MAX_DELAY);
 }
 
-extern int thb001p_adc_value[4];
+extern th8001p_Data joystick_data;
 extern osSemaphoreId_t thb001pDataReadySemaphore;
 extern float pitch,roll,yaw;
 extern osSemaphoreId_t mpu6050DataReadySemaphore;
@@ -55,15 +56,15 @@ void oled_task(void *argument) {
 		draw_at(0,24,"right_x:");
 		draw_at(0,32,"right_y:");
 
-		draw_at(60,8,thb001p_adc_value[0]);
-		draw_at(60,16,thb001p_adc_value[1]);
-		draw_at(60,24,thb001p_adc_value[2]);
-		draw_at(60,32,thb001p_adc_value[3]);
+		draw_at(60,8,joystick_data.adc_val[0]);
+		draw_at(60,16,joystick_data.adc_val[1]);
+		draw_at(60,24,joystick_data.adc_val[2]);
+		draw_at(60,32,joystick_data.adc_val[3]);
 
-		// draw_at(60,8,thb001p_adc_value[0]);
-		// draw_at(60,16,thb001p_adc_value[1]);
-		// draw_at(60,24,thb001p_adc_value[2]);
-		// draw_at(60,32,thb001p_adc_value[3]);
+		// draw_at(60,8,joystick_data.adc_val[0]);
+		// draw_at(60,16,joystick_data.adc_val[1]);
+		// draw_at(60,24,joystick_data.adc_val[2]);
+		// draw_at(60,32,joystick_data.adc_val[3]);
 
 		if(osSemaphoreAcquire(thb001pDataReadySemaphore,100)==osOK) {
 			ssd1306_flush();

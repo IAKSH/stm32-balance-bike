@@ -25,9 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "system.h"
 #include "tasks.h"
-#include "THB001P.h"
 #include "stdio.h"
 /* USER CODE END Includes */
 
@@ -60,9 +58,9 @@ const osThreadAttr_t mpu6050Task_attributes = {
     .stack_size = 128 * 3,
     .priority = (osPriority_t)osPriorityNormal1,
 };
-osThreadId_t thb001pTaskHandle;
+osThreadId_t joystickTaskHandle;
 const osThreadAttr_t thb001pTask_attributes = {
-    .name = "thb001pTask",
+    .name = "joystickTask",
     .stack_size = 128 * 2,
     .priority = (osPriority_t)osPriorityNormal,
 };
@@ -107,7 +105,7 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-  system_init();
+
   /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -137,14 +135,12 @@ void MX_FREERTOS_Init(void) {
   /* add threads, ... */
   oledTaskHandle = osThreadNew(oled_task, NULL, &oledTask_attributes);
   mpu6050TaskHandle = osThreadNew(mpu6050_task,NULL,&mpu6050Task_attributes);
-  thb001pTaskHandle = osThreadNew(thb001p_task, NULL, &thb001pTask_attributes);
+  joystickTaskHandle = osThreadNew(joystick_task, NULL, &thb001pTask_attributes);
   wirelessTxTaskHandle = osThreadNew(wireless_send_task, NULL, &wirelessTxTask_attributes);
-  if (wirelessTxTaskHandle == NULL)
-  {
+  if (wirelessTxTaskHandle == NULL) {
     printf("failed\n");
   }
-  else
-  {
+  else {
     printf("success\n");
   }
 
