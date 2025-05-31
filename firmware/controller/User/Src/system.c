@@ -9,10 +9,6 @@ uint8_t tx_address[5] = {0x0,0x0,0x0,0x0,0x01};
 
 void system_init(void)
 {
-    OLED_Init();
-    OLED_Clear();
-    OLED_Update();
-
     HAL_Delay(20);
 
     mpu6050_init();
@@ -24,6 +20,8 @@ void system_init(void)
     {
         printf("nrf24l01p abnormal\n");
     }
+
+    printf("test!\n");
 
     nrf24l01p_set_tx_addr(tx_address, 5);
     nrf24l01p_set_rx_addr(0, tx_address, 5);

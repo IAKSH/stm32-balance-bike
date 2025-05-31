@@ -20,8 +20,8 @@ floatAbi:
 ldscript: STM32F103XX_FLASH.ld # linker script
 
 # Compiler definitions. The -D prefix for the compiler will be automatically added.
-cDefinitions: ["ENABLE_STDOUT_REDIRECT"]
-cxxDefinitions: []
+cDefinitions: ["ENABLE_STDOUT_REDIRECT","SSD1306_SCREEN_HEIGHT=64"]
+cxxDefinitions: ["ENABLE_STDOUT_REDIRECT","SSD1306_SCREEN_HEIGHT=64"]
 asDefinitions: []
 
 # Compiler definition files. you can add a single files or an array of files for different definitions.
@@ -41,6 +41,7 @@ cFlags:
 cxxFlags: 
   - -fno-rtti
   - -fno-exceptions
+  - -std=c++20
 
 assemblyFlags: 
   - -Wall
@@ -81,7 +82,7 @@ includeDirectories:
   - Core/Src/**
   - Core/Lib/**
   - User/Inc/**
-
+  - libs/
 
 
 # Files that should be included in the compilation.
@@ -95,6 +96,7 @@ sourceFiles:
   - Core/Lib/**
   - User/Src/**
   - USer/Utils/**
+  - libs/**
 
 
 # When no makefile is present it will show a warning pop-up.
