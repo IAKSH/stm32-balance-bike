@@ -34,10 +34,10 @@ typedef enum {
     MOTOR_STOP
 } MotorDirection;
 
-void motorInit(void);
-void motorSetDirect(MotorID id, MotorDirection direction);
-void motorSetSpeed(MotorID id,uint16_t speed);
-void motorUpdateSpeed(float* motorSpeedA,float* motorBSpeedB);
+void motor_init(void);
+void motor_set_direct(MotorID id, MotorDirection direction);
+void motor_set_speed(MotorID id,uint16_t speed);
+void motor_update_speed(float* speed_a,float* speed_b);
 
 #ifdef __cplusplus
 }

@@ -76,6 +76,8 @@ osMessageQueueId_t get_command_queue(void) {
     return command_queue;
 }
 
+CommandPacket command;
+
 void control_task(void* arg) {
     NRF24L01PState nrf24_state;
     WirelessState wireless_state;
@@ -105,8 +107,6 @@ void control_task(void* arg) {
     }
 
     nrf24l01p_set_rx_addr(0,rx_address,5);
-
-    CommandPacket command;
 
     while(1) {
         wireless_receive(&command,sizeof(CommandPacket));

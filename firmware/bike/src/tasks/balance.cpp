@@ -7,9 +7,6 @@
 #include <math.h>
 #include <stdio.h>
 
-float mpu6050_pitch,mpu_6050_roll,mpu_6050_yaw;
-float motorSpeedA,motorSpeedB;
-
 #define ANGLE_KP 350.0f
 #define ANGLE_KI 0.25f
 #define ANGLE_KD 6.0f
@@ -17,6 +14,20 @@ float motorSpeedA,motorSpeedB;
 #define SPEED_KP 1.6f
 #define SPEED_KI 7.5f
 #define SPEED_KD 0.0f
+
+#define MAX_OUTPUT 7200
+#define MIN_OUTPUT -7200
+#define DEAD_ZONE 150
+
+float gyro_pitch,gyro_roll,gyro_yaw;
+float motor_speed_a,motor_speed_b;
+
+extern CommandPacket command;
+extern osEventFlagsId_t event;
+extern osSemaphoreId_t gyro_ready_sem;
+
+PID pid_angle = {.kp = ANGLE_KP, .ki = ANGLE_KI, .kd = ANGLE_KD};
+PID pid_speed = {.kp = SPEED_KP, .ki = SPEED_KI, .kd = SPEED_KD};
 
 static uint8_t i2c_read(uint16_t dev_addr,uint16_t reg_addr,uint16_t data_size,uint8_t *p_data) {
     osMutexAcquire(i2c_bus_mutex,osWaitForever);
@@ -36,45 +47,37 @@ static void nop(void) {
     __NOP();
 }
 
-#define MAX_OUTPUT 7200
-#define MIN_OUTPUT -7200
-#define DEAD_ZONE 150
-
-float mpu6050_pitch, mpu6050_roll, mpu6050_yaw;
-float motorSpeedA, motorSpeedB;
-
-extern CommandPacket command;
-extern osEventFlagsId_t event;
-extern osSemaphoreId_t gyro_ready_sem;
-
-PID pid_angle = {.kp = ANGLE_KP, .ki = ANGLE_KI, .kd = ANGLE_KD};
-PID pid_speed = {.kp = SPEED_KP, .ki = SPEED_KI, .kd = SPEED_KD};
-
-static inline int16_t clamp(int16_t val, int16_t min, int16_t max)
-{
+static inline int16_t clamp(int16_t val, int16_t min, int16_t max) {
     return val < min ? min : (val > max ? max : val);
 }
 
-void balance_task(void *arg)
-{
-    // 初始化
-    while (gyro_init() != 0)
-    {
+void balance_task(void *arg) {
+    GyroState state;
+    gyro_create_state(&state);
+    
+    state.__impl.i2c_write = i2c_write;
+    state.__impl.i2c_read = i2c_read;
+    state.__impl.delay_ms = HAL_Delay;
+    state.__impl.get_ms = HAL_GetTick;
+    state.__impl.nop = nop;
+
+    gyro_use_state(&state);
+
+    while (gyro_init() != 0) {
         printf("MPU6050 init failed\n");
         osDelay(100);
     }
     osEventFlagsSet(event, EVENT_FLAG_GYRO_INITIALIZED);
 
-    motorInit();
-    motorSetDirect(MOTOR_A, MOTOR_FORWARD);
-    motorSetDirect(MOTOR_B, MOTOR_FORWARD);
+    motor_init();
+    motor_set_direct(MOTOR_A, MOTOR_FORWARD);
+    motor_set_direct(MOTOR_B, MOTOR_FORWARD);
 
 
-    while (1)
-    {
+    while (1) {
         osSemaphoreAcquire(gyro_ready_sem, osWaitForever);
-        gyro_get_data(&mpu6050_pitch, &mpu6050_roll, &mpu6050_yaw);
-        motorUpdateSpeed(&motorSpeedA, &motorSpeedB);
+        gyro_get_data(&gyro_pitch, &gyro_roll, &gyro_yaw);
+        motor_update_speed(&motor_speed_a, &motor_speed_b);
 
         float current_time = osKernelGetTickCount() * 0.001f;
         static float last_time = 0;
@@ -84,11 +87,9 @@ void balance_task(void *arg)
             dt = 0.005f;
 
         // 检测防跌倒
-        if (fabs(mpu6050_pitch) >= 40.0f)
-        {
-
-            motorSetDirect(MOTOR_A, MOTOR_STOP);
-            motorSetDirect(MOTOR_B, MOTOR_STOP);
+        if (fabs(gyro_pitch) >= 40.0f) {
+            motor_set_direct(MOTOR_A, MOTOR_STOP);
+            motor_set_direct(MOTOR_B, MOTOR_STOP);
             osDelay(50); // 等待一会，防止频繁切换
             continue;
         }
@@ -99,12 +100,12 @@ void balance_task(void *arg)
 
         // 外环 PID：角度控制
         pid_angle.set_point = target_angle;
-        float angleCorrection = pid_angle(mpu6050_pitch, dt) + (float)command.payload.move.speed[0];
+        float angleCorrection = pid_angle(gyro_pitch, dt) + (float)command.payload.move.speed[0];
         
         angleCorrection=clamp(angleCorrection,MIN_OUTPUT,MAX_OUTPUT);
 
         // 内环 PID：速度控制（取左右轮平均速度）
-        float avgSpeed = (motorSpeedA + motorSpeedB) / 2.0f ;
+        float avgSpeed = (motor_speed_a + motor_speed_b) / 2.0f ;
         pid_speed.set_point = angleCorrection;
         float speedCommand = pid_speed(avgSpeed, dt);
 
@@ -123,9 +124,9 @@ void balance_task(void *arg)
         ctrlB = clamp(ctrlB, MIN_OUTPUT, MAX_OUTPUT);
 
         // 设置电机
-        motorSetDirect(MOTOR_A, ctrlA >= 0 ? MOTOR_FORWARD : MOTOR_BACKWARD);
-        motorSetDirect(MOTOR_B, ctrlB >= 0 ? MOTOR_FORWARD : MOTOR_BACKWARD);
-        motorSetSpeed(MOTOR_A, abs(ctrlA));
-        motorSetSpeed(MOTOR_B, abs(ctrlB));
+        motor_set_direct(MOTOR_A, ctrlA >= 0 ? MOTOR_FORWARD : MOTOR_BACKWARD);
+        motor_set_direct(MOTOR_B, ctrlB >= 0 ? MOTOR_FORWARD : MOTOR_BACKWARD);
+        motor_set_speed(MOTOR_A, abs(ctrlA));
+        motor_set_speed(MOTOR_B, abs(ctrlB));
     }
 }

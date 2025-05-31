@@ -9,7 +9,7 @@ float PID::operator()(float measurement, float dt) {
     if(integral < -1000.0f) integral = -1000.0f;
 
     float derivative = (error - last_error) / dt;
-    output = kp * error + ki * integral + kd * derivative;
+    float output = kp * error + ki * integral + kd * derivative;
     last_error = error;
     return output;
 }

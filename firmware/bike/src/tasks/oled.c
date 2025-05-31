@@ -8,7 +8,7 @@
 #define I2C_PORT hi2c1
 #define I2C_ADDR (0x3C << 1)
 
-extern float mpu6050_pitch,mpu_6050_roll,mpu_6050_yaw;
+extern float gyro_pitch,gyro_roll,gyro_yaw;
 extern double pitchPIDOutput;
 
 void oled_write_cmd(uint8_t byte) {
@@ -48,8 +48,8 @@ void oled_task(void* arg) {
 
     while(1) {
         snprintf(buf[0],sizeof(buf),"p= %d.%d%d r= %d.%d%d      ",
-        (int)mpu6050_pitch,(int)fabs((int)(mpu6050_pitch * 10)) % 10,(int)fabs((int)(mpu6050_pitch * 100)) % 10,
-        (int)mpu_6050_roll,(int)fabs((int)(mpu_6050_roll) * 10) % 10,(int)fabs((int)(mpu_6050_roll * 100)) % 10);
+        (int)gyro_pitch,(int)fabs((int)(gyro_pitch * 10)) % 10,(int)fabs((int)(gyro_pitch * 100)) % 10,
+        (int)gyro_roll,(int)fabs((int)(gyro_roll) * 10) % 10,(int)fabs((int)(gyro_roll * 100)) % 10);
 
         state.cursor.x = 0;
         state.cursor.y = 0;
