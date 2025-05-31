@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <string.h>
 #include "cmsis_os.h"
-#include "OLED.h"
 #include "data_proc.h"
 
 static NRF24L01P_Fragment fragments[NRF24L01P_FRAGMENT_MAX_LEN];

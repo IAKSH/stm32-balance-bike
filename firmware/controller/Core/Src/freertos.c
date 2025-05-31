@@ -26,8 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "system.h"
-#include "OLED.h"
-#include "mpu6050.h"
+#include "tasks.h"
 #include "THB001P.h"
 #include "wireless.h"
 #include "stdio.h"

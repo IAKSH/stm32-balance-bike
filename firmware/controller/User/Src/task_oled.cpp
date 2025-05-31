@@ -1,13 +1,10 @@
+#include "tasks.h"
 #include "i2c.h"
 #include <cstdio>
 #include <string>
 #include <type_traits>
 #include <cmsis_os2.h>
 #include <drivers/ssd1306/ssd1306.h>
-
-extern "C" {
-	void oled_task(void *argument);
-}
 
 static void write_cmd(uint8_t command) {
 	HAL_I2C_Mem_Write(&hi2c1, 0x78, 0x00, I2C_MEMADD_SIZE_8BIT, &command, 1, HAL_MAX_DELAY);
