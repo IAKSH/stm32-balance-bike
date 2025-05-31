@@ -192,7 +192,7 @@ int main(void)
   CommandPacket command = {
     .version = 0x00,
     .type = COMMAND_MOVE,
-    .payload.move.speed = {UINT16_MAX, UINT16_MAX}
+    .payload.move.speed = {INT16_MAX, INT16_MAX}
   };
 
   int i = 0;
@@ -206,7 +206,7 @@ int main(void)
 
     // 更新 command 中的数据
     command.payload.move.speed[0] = i;
-    command.payload.move.speed[1] = UINT16_MAX - i;
+    command.payload.move.speed[1] = INT16_MAX - i;
     i++;
 
     wireless_send(&command,sizeof(CommandPacket));
