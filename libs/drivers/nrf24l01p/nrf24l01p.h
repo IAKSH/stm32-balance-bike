@@ -7,7 +7,9 @@ extern "C" {
 #include <stdbool.h>
 #include <assert.h>
 
+#ifndef NRF24L01P_FRAGMENT_MAX_LEN
 #define NRF24L01P_FRAGMENT_MAX_LEN 128
+#endif
 
 // 实际上可以改为先发送表示总长度的包，然后发送对应长度的数据
 // 至于传一半挂掉的情况，可以在接收端加入超时检测

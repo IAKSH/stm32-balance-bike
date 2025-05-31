@@ -28,7 +28,6 @@
 #include "system.h"
 #include "tasks.h"
 #include "THB001P.h"
-#include "wireless.h"
 #include "stdio.h"
 /* USER CODE END Includes */
 
@@ -52,26 +51,26 @@
 osThreadId_t oledTaskHandle;
 const osThreadAttr_t oledTask_attributes = {
     .name = "oledTask",
-    .stack_size = 128 * 4,
+    .stack_size = 128 * 3,
     .priority = (osPriority_t)osPriorityNormal,
 };
 osThreadId_t mpu6050TaskHandle;
 const osThreadAttr_t mpu6050Task_attributes = {
     .name = "mpu6050Task",
-    .stack_size = 128 * 4,
+    .stack_size = 128 * 3,
     .priority = (osPriority_t)osPriorityNormal1,
 };
 osThreadId_t thb001pTaskHandle;
 const osThreadAttr_t thb001pTask_attributes = {
     .name = "thb001pTask",
-    .stack_size = 128 * 4,
+    .stack_size = 128 * 2,
     .priority = (osPriority_t)osPriorityNormal,
 };
 
 osThreadId_t wirelessTxTaskHandle;
 const osThreadAttr_t wirelessTxTask_attributes = {
     .name = "wirelessTxTask",
-    .stack_size = 128 * 4,
+    .stack_size = 128 * 7,
     .priority = (osPriority_t)osPriorityNormal,
 };
 

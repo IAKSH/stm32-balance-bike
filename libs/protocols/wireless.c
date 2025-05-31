@@ -36,7 +36,14 @@ void wireless_irq(void) {
 
 void wireless_send(void* data,uint16_t len) {
     const uint16_t payload_size = sizeof(state->nrf24->__fragments[0].payload);
+    const uint16_t max_frags = NRF24L01P_FRAGMENT_MAX_LEN;
     uint16_t frag_cnt = len / payload_size + ((len % payload_size) ? 1 : 0);
+
+    if(frag_cnt > max_frags) {
+        // 数据太大，无法分片，直接返回或报错
+        printf("wireless_send: too much data, frag_cnt=%u, max=%u\n", frag_cnt, max_frags);
+        return;
+    }
 
     // 分包
     uint8_t* p = (uint8_t*)data;

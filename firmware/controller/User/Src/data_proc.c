@@ -1,7 +1,6 @@
 #include "data_proc.h"
 #include "stdlib.h"
 #include "stdio.h"
-#include "wireless.h"
 
 #define ADC_OFFSET(x) (((x) > 0) ? (10) : (-10))
 #define GYRO_OFFSET(x)  (((x) > 0) ? (10) : (-10))
@@ -16,7 +15,7 @@
 extern int thb001p_adc_value[4];
 extern float pitch, roll, yaw;
 
-void motor_speed_calc(int16_t *cmd_speed,int16_t *cmd_turn)
+static void motor_speed_calc(int16_t *cmd_speed,int16_t *cmd_turn)
 {
     // 电机转速处理
     int16_t rocker_x = thb001p_adc_value[0] - ADC_CENTER;
@@ -40,7 +39,7 @@ void motor_speed_calc(int16_t *cmd_speed,int16_t *cmd_turn)
     printf("motor_speed: %d  %d\n", *cmd_speed, *cmd_turn);
 }
 
-void gimbal_angle_calc(float *angle_buttom_offset,float *angle_top_offset)
+static void gimbal_angle_calc(float *angle_buttom_offset,float *angle_top_offset)
 {
     int gimbal_angle_x = thb001p_adc_value[2] - ADC_CENTER;
     int gimbal_angle_y = thb001p_adc_value[3] - ADC_CENTER;

@@ -2,7 +2,7 @@
 #include "gpio.h"
 #include "cmsis_os.h"
 #include "stdio.h"
-#include "wireless.h"
+#include <protocols/wireless.h>
 
 #define MPU6050_INT_PIN GPIO_PIN_5
 #define EXIT7_WIRELESS_IRQ_Pin GPIO_PIN_4
